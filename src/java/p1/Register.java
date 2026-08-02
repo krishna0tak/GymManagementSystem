@@ -6,13 +6,6 @@ package p1;
  */
 import java.sql.*;
 import java.util.Calendar;
-import java.util.Base64;
-import java.nio.charset.StandardCharsets;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
-import p1.dbcon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -37,21 +30,6 @@ public class Register extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-private static final String AES_KEY="1234567890abcdef";
-
-public String encryptAES(String data)throws Exception{
-
-    SecretKeySpec key =
-        new SecretKeySpec(AES_KEY.getBytes(StandardCharsets.UTF_8),"AES");
-
-    Cipher cipher=Cipher.getInstance("AES");
-
-    cipher.init(Cipher.ENCRYPT_MODE,key);
-
-    return Base64.getEncoder().encodeToString(
-            cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
-}
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -105,9 +83,9 @@ msg="Email already registered.";
 
 }else{
 
-// Encrypt Password
+// Encrypt Password via shared utility
 
-String encPassword=encryptAES(password);
+String encPassword = AESUtil.encryptAES(password);
 
 
 // Join Date
@@ -170,7 +148,7 @@ int i=ps.executeUpdate();
 
 if(i>0){
 
-response.sendRedirect("login.jsp?success=1");
+response.sendRedirect(request.getContextPath() + "/Login?success=1");
 return;
 
 }else{
