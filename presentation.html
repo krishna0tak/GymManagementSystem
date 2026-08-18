@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit Gym Management System – Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #D32F2F;
+            --primary-light: #FFEBEE;
+            --primary-mid: #EF5350;
+            --bg: #f4f5f7;
+            --card: #ffffff;
+            --border: #dde1e7;
+            --text: #1a1a2e;
+            --text-muted: #5a6478;
+            --blue: #1565C0;
+            --green: #2E7D32;
+            --orange: #E65100;
+            --purple: #6A1B9A;
+            --gold: #F57F17;
+            --shadow: 0 2px 12px rgba(0,0,0,0.10);
+            --shadow-lg: 0 6px 28px rgba(0,0,0,0.15);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Inter',sans-serif; }
+
+        /* ══ SLIDES ══ */
+        .slideshow { width:100%; height:100vh; position:relative; }
+        .slide {
+            position:absolute; inset:0;
+            display:none; flex-direction:column;
+            justify-content:center; align-items:center;
+            padding:52px 64px;
+            background:var(--bg);
+            opacity:0; transition:opacity 0.4s ease;
+        }
+        .slide.active { display:flex; opacity:1; }
+
+        /* ══ PROGRESS ══ */
+        .progress-bar { position:fixed; top:0; left:0; height:4px; background:var(--primary); transition:width 0.4s; z-index:200; }
+
+        /* ══ DOTS ══ */
+        .dots { position:fixed; top:14px; left:50%; transform:translateX(-50%); display:flex; gap:7px; z-index:100; }
+        .dot { width:7px; height:7px; border-radius:50%; background:#ccc; cursor:pointer; transition:background 0.3s, transform 0.3s; }
+        .dot.active { background:var(--primary); transform:scale(1.5); }
+
+        /* ══ NAV ══ */
+        .nav-bar { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:100; }
+        .nav-btn {
+            background:white; border:1.5px solid var(--border);
+            color:var(--text); padding:10px 28px;
+            border-radius:50px; cursor:pointer;
+            font-size:14px; font-family:'Inter',sans-serif;
+            font-weight:600; box-shadow:var(--shadow);
+            transition:all 0.2s;
+        }
+        .nav-btn:hover { background:var(--primary); color:white; border-color:var(--primary); }
+        .nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+        .slide-num { position:fixed; bottom:28px; right:36px; font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; z-index:100; }
+        .kbd-hint { position:fixed; bottom:68px; left:50%; transform:translateX(-50%); font-size:11px; color:#bbb; z-index:100; }
+
+        /* ══ TYPOGRAPHY ══ */
+        .slide-badge {
+            font-size:11px; letter-spacing:2.5px; text-transform:uppercase;
+            color:var(--primary); font-weight:700;
+            border:1.5px solid rgba(211,47,47,0.25);
+            padding:6px 18px; border-radius:50px;
+            background:var(--primary-light); margin-bottom:18px;
+        }
+        h1.sh1 { font-size:clamp(34px,4.5vw,60px); font-weight:900; letter-spacing:-2px; line-height:1.08; text-align:center; margin-bottom:18px; color:var(--text); }
+        h1.sh1 span { color:var(--primary); }
+        h2.sh2 { font-size:clamp(24px,3vw,40px); font-weight:800; letter-spacing:-1px; margin-bottom:10px; text-align:center; color:var(--text); }
+        h2.sh2 span { color:var(--primary); }
+        .underline { width:50px; height:4px; background:var(--primary); margin:0 auto 28px; border-radius:2px; }
+        .slide-sub { font-size:clamp(14px,1.6vw,18px); color:var(--text-muted); text-align:center; max-width:600px; line-height:1.75; }
+
+        /* ══ CARD GRIDS ══ */
+        .g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:880px; }
+        .g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%; max-width:920px; }
+        .g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:100%; max-width:980px; }
+
+        .pcard {
+            background:white; border:1.5px solid var(--border);
+            border-radius:12px; padding:20px;
+            box-shadow:var(--shadow); transition:all 0.2s;
+        }
+        .pcard:hover { box-shadow:var(--shadow-lg); border-color:var(--primary-mid); }
+        .pcard .icon { font-size:28px; margin-bottom:10px; }
+        .pcard h3 { font-size:14px; font-weight:700; color:var(--text); margin-bottom:7px; }
+        .pcard p { font-size:12px; color:var(--text-muted); line-height:1.6; margin:0; }
+
+        /* ══ BULLET LIST ══ */
+        .blist { list-style:none; width:100%; max-width:420px; }
+        .blist li { padding:10px 16px; border-left:3px solid var(--border); margin-bottom:8px; background:white; border-radius:0 8px 8px 0; font-size:14px; display:flex; align-items:center; gap:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .blist.red li { border-left-color:var(--primary); }
+        .blist.green li { border-left-color:var(--green); }
+
+        /* ══ TABLE ══ */
+        .ptable { width:100%; border-collapse:collapse; font-size:13px; max-width:880px; background:white; border-radius:10px; overflow:hidden; box-shadow:var(--shadow); }
+        .ptable th { background:var(--primary); color:white; padding:11px 15px; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; }
+        .ptable td { padding:9px 15px; border-top:1px solid var(--border); color:var(--text); font-size:13px; }
+        .ptable tr:hover td { background:#fff5f5; }
+
+        /* ══ STATS ══ */
+        .stats-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .spill { background:white; border:1.5px solid var(--border); border-radius:12px; padding:18px 28px; text-align:center; min-width:140px; box-shadow:var(--shadow); }
+        .spill .num { font-size:36px; font-weight:900; color:var(--primary); line-height:1; }
+        .spill .lbl { font-size:11px; color:var(--text-muted); margin-top:5px; text-transform:uppercase; letter-spacing:1px; }
+
+        /* ══ BADGES ══ */
+        .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; }
+        .badge-green { background:#E8F5E9; color:#2E7D32; }
+        .badge-red { background:#FFEBEE; color:var(--primary); }
+
+        /* ══ ARCH TIERS ══ */
+        .tier {
+            display:flex; align-items:center; gap:16px;
+            width:100%; max-width:780px; padding:14px 20px;
+            border-radius:10px; margin-bottom:10px;
+        }
+        .tier-lbl { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; min-width:120px; font-weight:700; }
+        .tier-content { flex:1; font-size:14px; font-weight:600; }
+        .tier-desc { font-size:12px; color:var(--text-muted); min-width:200px; text-align:right; }
+
+        /* ══ FLOW ══ */
+        .flow-row { display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; }
+        .fbox { background:white; border:1.5px solid var(--border); border-radius:8px; padding:10px 16px; font-size:12px; font-weight:600; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07); min-width:90px; }
+        .farrow { color:var(--primary); font-size:20px; padding:0 6px; }
+
+        /* ══ COVER SLIDE ══ */
+        #s1 { background: linear-gradient(135deg, #fff5f5 0%, #fff 50%, #f0f4ff 100%); }
+        .cover-meta { display:flex; gap:0; justify-content:center; flex-wrap:wrap; border-top:2px solid var(--border); padding-top:24px; margin-top:24px; }
+        .cmeta { text-align:center; padding:0 28px; border-right:1px solid var(--border); }
+        .cmeta:last-child { border-right:none; }
+        .cmeta .l { font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:4px; }
+        .cmeta .v { font-size:13px; font-weight:700; color:var(--text); }
+
+        /* ══ DIAGRAM SLIDE ══ */
+        .diag-wrap { background:white; border:1.5px solid var(--border); border-radius:12px; padding:20px; width:100%; max-width:820px; box-shadow:var(--shadow); overflow:hidden; }
+        .diag-title { font-size:12px; font-weight:700; text-align:center; color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="dots" id="dotsContainer"></div>
+<div class="slide-num" id="slideNum"></div>
+
+<div class="slideshow">
+
+<!-- ── SLIDE 1: TITLE ── -->
+<div class="slide active" id="s1">
+    <div class="slide-badge">🎓 Project Presentation — 2026</div>
+    <h1 class="sh1">PowerFit <span>Gym</span><br>Management System</h1>
+    <p class="slide-sub">A full-stack web application for streamlined gym operations, member management, attendance tracking, and fitness analytics.</p>
+    <div class="cover-meta" style="width:100%; max-width:700px; margin-top:28px;">
+        <div class="cmeta"><div class="l">Technology</div><div class="v">JSP · MySQL · Tomcat</div></div>
+        <div class="cmeta"><div class="l">Security</div><div class="v">AES-128 Encryption</div></div>
+        <div class="cmeta"><div class="l">User Roles</div><div class="v">Admin + Member</div></div>
+        <div class="cmeta"><div class="l">Status</div><div class="v">✅ Completed</div></div>
+    </div>
+</div>
+
+<!-- ── SLIDE 2: PROBLEM ── -->
+<div class="slide" id="s2">
+    <div class="slide-badge">Problem Statement</div>
+    <h2 class="sh2">Why This <span>System?</span></h2>
+    <div class="underline"></div>
+    <div class="g2" style="max-width:820px; align-items:start;">
+        <div>
+            <h3 style="color:var(--primary); margin-bottom:14px; font-size:15px; font-weight:700;">❌ Without This System</h3>
+            <ul class="blist red">
+                <li>📄 Paper-based member records</li>
+                <li>⏳ Manual expiry date tracking</li>
+                <li>🔍 No member search capability</li>
+                <li>📊 No analytics or statistics</li>
+                <li>🔑 Passwords in plain registers</li>
+                <li>📧 No automated notifications</li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color:var(--green); margin-bottom:14px; font-size:15px; font-weight:700;">✅ With This System</h3>
+            <ul class="blist green">
+                <li>💾 Centralised MySQL database</li>
+                <li>📅 Auto expiry date calculation</li>
+                <li>🔎 Real-time member search</li>
+                <li>📈 Admin analytics dashboard</li>
+                <li>🔐 AES-128 encrypted passwords</li>
+                <li>📧 Automated password reset email</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 3: OBJECTIVES ── -->
+<div class="slide" id="s3">
+    <div class="slide-badge">Objectives</div>
+    <h2 class="sh2">What We <span>Built</span></h2>
+    <div class="underline"></div>
+    <div class="g4">
+        <div class="pcard"><div class="icon">🏋️</div><h3>Member Management</h3><p>Registration, login, profile editing and session tracking.</p></div>
+        <div class="pcard" style="border-color:var(--primary-mid);"><div class="icon">🛡️</div><h3>Admin Dashboard</h3><p>Analytics, searchable member list, delete, plan creation.</p></div>
+        <div class="pcard"><div class="icon">📅</div><h3>Attendance Tracking</h3><p>One-click daily check-in with history and monthly stats.</p></div>
+        <div class="pcard"><div class="icon">⚖️</div><h3>BMI Calculator</h3><p>Live BMI, visual gauge, recommendations and profile save.</p></div>
+        <div class="pcard"><div class="icon">💪</div><h3>Workout Plans</h3><p>Personalised routines based on member BMI category.</p></div>
+        <div class="pcard" style="border-color:var(--primary-mid);"><div class="icon">📧</div><h3>Forgot Password</h3><p>Auto-generates and emails new password via Gmail SMTP.</p></div>
+        <div class="pcard"><div class="icon">💳</div><h3>Membership Plans</h3><p>Basic (₹999), Standard (₹1499), Premium (₹2499).</p></div>
+        <div class="pcard"><div class="icon">🔒</div><h3>Secure Auth</h3><p>AES, PreparedStatement, session-based role access control.</p></div>
+    </div>
+</div>
+
+<!-- ── SLIDE 4: TECH STACK ── -->
+<div class="slide" id="s4">
+    <div class="slide-badge">Technology Stack</div>
+    <h2 class="sh2">Tools & <span>Technologies</span></h2>
+    <div class="underline"></div>
+    <table class="ptable">
+        <thead><tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td>🖥️ Front-End</td><td>HTML5 · CSS3 · JavaScript</td><td>—</td><td>UI, styling, client-side validation</td></tr>
+            <tr><td>⚙️ Back-End</td><td>JavaServer Pages (JSP)</td><td>3.1</td><td>Server logic and dynamic rendering</td></tr>
+            <tr><td>🌐 Server</td><td>Apache Tomcat</td><td>11.0.23</td><td>Servlet container and deployment</td></tr>
+            <tr><td>🗄️ Database</td><td>MySQL</td><td>8.0</td><td>Persistent data storage</td></tr>
+            <tr><td>🔌 Driver</td><td>MySQL Connector/J</td><td>9.7.0</td><td>Java ↔ MySQL bridge</td></tr>
+            <tr><td>📬 Email</td><td>JavaMail API</td><td>1.6</td><td>SMTP email delivery (Gmail)</td></tr>
+            <tr><td>🔐 Security</td><td>Java Cipher API (AES)</td><td>—</td><td>Password encryption &amp; decryption</td></tr>
+            <tr><td>🛠️ IDE</td><td>Apache NetBeans</td><td>30</td><td>Development environment</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── SLIDE 5: ARCHITECTURE ── -->
+<div class="slide" id="s5">
+    <div class="slide-badge">System Architecture</div>
+    <h2 class="sh2">3-Tier <span>Architecture</span></h2>
+    <div class="underline"></div>
+    <div style="width:100%; max-width:780px;">
+        <div class="tier" style="background:#E3F2FD; border:1.5px solid #90CAF9;">
+            <div class="tier-lbl" style="color:var(--blue);">Tier 1 – Presentation</div>
+            <div class="tier-content" style="color:var(--blue);">🖥️ HTML5 + CSS3 + JavaScript (Browser)</div>
+            <div class="tier-desc">Forms, tables, navigation, animations</div>
+        </div>
+        <div style="text-align:center; font-size:26px; color:var(--primary); margin:2px 0;">⟷  HTTP Request / Response  ⟷</div>
+        <div class="tier" style="background:#FFEBEE; border:1.5px solid #EF9A9A;">
+            <div class="tier-lbl" style="color:var(--primary);">Tier 2 – Application</div>
+            <div class="tier-content" style="color:var(--primary);">⚙️ JSP + Java Classes + Apache Tomcat</div>
+            <div class="tier-desc">Business logic, session, JDBC calls</div>
+        </div>
+        <div style="text-align:center; font-size:26px; color:var(--primary); margin:2px 0;">⟷  JDBC / MySQL Protocol  ⟷</div>
+        <div class="tier" style="background:#E8F5E9; border:1.5px solid #A5D6A7;">
+            <div class="tier-lbl" style="color:var(--green);">Tier 3 – Data</div>
+            <div class="tier-content" style="color:var(--green);">🗄️ MySQL Database (gym_management)</div>
+            <div class="tier-desc">members · membership_plan · attendance · admin</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 6: DATABASE ── -->
+<div class="slide" id="s6">
+    <div class="slide-badge">Database Design</div>
+    <h2 class="sh2">Database <span>Schema</span></h2>
+    <div class="underline"></div>
+    <div class="g4" style="max-width:960px;">
+        <div class="pcard" style="border-top:4px solid var(--primary);">
+            <h3 style="color:var(--primary); margin-bottom:12px;">📋 members</h3>
+            <div style="font-family:'JetBrains Mono'; font-size:11px; line-height:1.9; color:var(--text-muted);">
+                <div style="color:var(--gold); font-weight:700;">🔑 member_id (PK)</div>
+                <div>name, gender, dob, age</div>
+                <div>mobile, email (UNIQUE)</div>
+                <div style="color:var(--primary);">password (AES)</div>
+                <div>address, height, weight</div>
+                <div style="color:var(--blue); font-weight:600;">🔗 plan_id (FK)</div>
+                <div>join_date, expiry_date</div>
+            </div>
+        </div>
+        <div class="pcard" style="border-top:4px solid var(--green);">
+            <h3 style="color:var(--green); margin-bottom:12px;">💳 membership_plan</h3>
+            <div style="font-family:'JetBrains Mono'; font-size:11px; line-height:1.9; color:var(--text-muted);">
+                <div style="color:var(--gold); font-weight:700;">🔑 plan_id (PK)</div>
+                <div>plan_name</div>
+                <div>duration_months</div>
+                <div>fees</div>
+                <br>
+                <div style="color:var(--green); font-weight:600;">Default Plans:</div>
+                <div>Basic | Standard | Premium</div>
+            </div>
+        </div>
+        <div class="pcard" style="border-top:4px solid var(--blue);">
+            <h3 style="color:var(--blue); margin-bottom:12px;">📅 attendance</h3>
+            <div style="font-family:'JetBrains Mono'; font-size:11px; line-height:1.9; color:var(--text-muted);">
+                <div style="color:var(--gold); font-weight:700;">🔑 attendance_id (PK)</div>
+                <div style="color:var(--blue); font-weight:600;">🔗 member_id (FK)</div>
+                <div>attendance_date</div>
+                <div>check_in_time</div>
+                <div>status</div>
+                <br>
+                <div style="color:var(--primary); font-size:10px;">UNIQUE(member_id, date)</div>
+            </div>
+        </div>
+        <div class="pcard" style="border-top:4px solid var(--purple);">
+            <h3 style="color:var(--purple); margin-bottom:12px;">🛡️ admin</h3>
+            <div style="font-family:'JetBrains Mono'; font-size:11px; line-height:1.9; color:var(--text-muted);">
+                <div style="color:var(--gold); font-weight:700;">🔑 username (PK)</div>
+                <div>password</div>
+                <br><br><br>
+                <div style="color:var(--purple); font-weight:600;">Default:</div>
+                <div>admin / admin123</div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:16px; font-size:13px; color:var(--text-muted); text-align:center;">
+        🔗 <strong>Relationships:</strong> &nbsp; membership_plan <b>1 ──→ M</b> members &nbsp;|&nbsp; members <b>1 ──→ M</b> attendance
+    </div>
+</div>
+
+<!-- ── SLIDE 7: ER DIAGRAM ── -->
+<div class="slide" id="s7">
+    <div class="slide-badge">Database Design</div>
+    <h2 class="sh2">ER <span>Diagram</span></h2>
+    <div class="underline"></div>
+    <div class="diag-wrap">
+        <div class="diag-title">Entity-Relationship Diagram — gym_management</div>
+        <svg viewBox="0 0 760 320" width="100%" style="max-width:760px;">
+            <!-- membership_plan -->
+            <rect x="10" y="100" width="160" height="120" rx="6" fill="white" stroke="#D32F2F" stroke-width="2"/>
+            <rect x="10" y="100" width="160" height="30" rx="6" fill="#D32F2F"/>
+            <text x="90" y="120" text-anchor="middle" font-size="12" font-weight="700" fill="white">membership_plan</text>
+            <line x1="10" y1="130" x2="170" y2="130" stroke="#D32F2F" stroke-width="1"/>
+            <text x="20" y="147" font-size="10" fill="#D32F2F" font-weight="700">🔑 plan_id</text>
+            <line x1="10" y1="153" x2="170" y2="153" stroke="#eee" stroke-width="1"/>
+            <text x="20" y="167" font-size="10" fill="#555">plan_name</text>
+            <line x1="10" y1="172" x2="170" y2="172" stroke="#eee" stroke-width="1"/>
+            <text x="20" y="186" font-size="10" fill="#555">duration_months</text>
+            <line x1="10" y1="191" x2="170" y2="191" stroke="#eee" stroke-width="1"/>
+            <text x="20" y="205" font-size="10" fill="#555">fees</text>
+
+            <!-- members -->
+            <rect x="280" y="40" width="200" height="240" rx="6" fill="white" stroke="#1565C0" stroke-width="2"/>
+            <rect x="280" y="40" width="200" height="30" rx="6" fill="#1565C0"/>
+            <text x="380" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="white">members</text>
+            <line x1="280" y1="70" x2="480" y2="70" stroke="#1565C0" stroke-width="1"/>
+            <text x="292" y="87" font-size="10" fill="#1565C0" font-weight="700">🔑 member_id</text>
+            <line x1="280" y1="92" x2="480" y2="92" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="106" font-size="10" fill="#555">name, gender, dob, age</text>
+            <line x1="280" y1="111" x2="480" y2="111" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="125" font-size="10" fill="#555">mobile, email (UNIQUE)</text>
+            <line x1="280" y1="130" x2="480" y2="130" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="144" font-size="10" fill="#D32F2F">password (AES encrypted)</text>
+            <line x1="280" y1="149" x2="480" y2="149" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="163" font-size="10" fill="#555">address, height, weight</text>
+            <line x1="280" y1="168" x2="480" y2="168" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="182" font-size="10" fill="#1565C0" font-weight="600">🔗 plan_id (FK)</text>
+            <line x1="280" y1="187" x2="480" y2="187" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="201" font-size="10" fill="#555">join_date</text>
+            <line x1="280" y1="206" x2="480" y2="206" stroke="#eee" stroke-width="1"/>
+            <text x="292" y="220" font-size="10" fill="#555">expiry_date</text>
+
+            <!-- attendance -->
+            <rect x="570" y="80" width="170" height="160" rx="6" fill="white" stroke="#2E7D32" stroke-width="2"/>
+            <rect x="570" y="80" width="170" height="30" rx="6" fill="#2E7D32"/>
+            <text x="655" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="white">attendance</text>
+            <line x1="570" y1="110" x2="740" y2="110" stroke="#2E7D32" stroke-width="1"/>
+            <text x="582" y="127" font-size="10" fill="#2E7D32" font-weight="700">🔑 attendance_id</text>
+            <line x1="570" y1="132" x2="740" y2="132" stroke="#eee" stroke-width="1"/>
+            <text x="582" y="147" font-size="10" fill="#1565C0" font-weight="600">🔗 member_id (FK)</text>
+            <line x1="570" y1="152" x2="740" y2="152" stroke="#eee" stroke-width="1"/>
+            <text x="582" y="167" font-size="10" fill="#555">attendance_date</text>
+            <line x1="570" y1="172" x2="740" y2="172" stroke="#eee" stroke-width="1"/>
+            <text x="582" y="187" font-size="10" fill="#555">check_in_time</text>
+            <line x1="570" y1="192" x2="740" y2="192" stroke="#eee" stroke-width="1"/>
+            <text x="582" y="207" font-size="10" fill="#555">status</text>
+            <text x="582" y="230" font-size="9" fill="#D32F2F" font-style="italic">UNIQUE(member_id, date)</text>
+
+            <!-- Relationship lines -->
+            <!-- membership_plan → members: 1 to M -->
+            <line x1="170" y1="160" x2="280" y2="160" stroke="#555" stroke-width="1.8"/>
+            <text x="178" y="153" font-size="12" fill="#D32F2F" font-weight="700">1</text>
+            <text x="265" y="153" font-size="12" fill="#1565C0" font-weight="700">M</text>
+            <polygon points="200,152 214,160 200,168 186,160" fill="white" stroke="#555" stroke-width="1.5"/>
+            <text x="200" y="164" text-anchor="middle" font-size="8" fill="#333">subscribes</text>
+
+            <!-- members → attendance: 1 to M -->
+            <line x1="480" y1="160" x2="570" y2="160" stroke="#555" stroke-width="1.8"/>
+            <text x="485" y="152" font-size="12" fill="#1565C0" font-weight="700">1</text>
+            <text x="555" y="152" font-size="12" fill="#2E7D32" font-weight="700">M</text>
+            <polygon points="515,152 529,160 515,168 501,160" fill="white" stroke="#555" stroke-width="1.5"/>
+            <text x="515" y="164" text-anchor="middle" font-size="8" fill="#333">has</text>
+
+            <!-- Admin (standalone) -->
+            <rect x="10" y="265" width="140" height="50" rx="6" fill="white" stroke="#6A1B9A" stroke-width="2"/>
+            <rect x="10" y="265" width="140" height="25" rx="6" fill="#6A1B9A"/>
+            <text x="80" y="282" text-anchor="middle" font-size="11" font-weight="700" fill="white">admin</text>
+            <text x="80" y="302" text-anchor="middle" font-size="10" fill="#555">username (PK) · password</text>
+            <text x="80" y="317" text-anchor="middle" font-size="9" fill="#888">(No FK relationship)</text>
+        </svg>
+    </div>
+</div>
+
+<!-- ── SLIDE 8: DFD LEVEL 0 ── -->
+<div class="slide" id="s8">
+    <div class="slide-badge">Data Flow Diagram</div>
+    <h2 class="sh2">DFD Level 0 – <span>Context Diagram</span></h2>
+    <div class="underline"></div>
+    <div class="diag-wrap">
+        <div class="diag-title">Entire system shown as one process with external data flows</div>
+        <svg viewBox="0 0 700 300" width="100%" style="max-width:700px;">
+            <defs>
+                <marker id="d1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1565C0"/></marker>
+                <marker id="d2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#D32F2F"/></marker>
+                <marker id="d3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#6A1B9A"/></marker>
+                <marker id="d4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#E65100"/></marker>
+            </defs>
+            <!-- Member entity -->
+            <rect x="15" y="110" width="120" height="60" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+            <text x="75" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">👤 Member</text>
+            <text x="75" y="152" text-anchor="middle" font-size="10" fill="#666">External Entity</text>
+            <!-- Admin entity -->
+            <rect x="565" y="110" width="120" height="60" rx="6" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="2"/>
+            <text x="625" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#6A1B9A">🛡️ Admin</text>
+            <text x="625" y="152" text-anchor="middle" font-size="10" fill="#666">External Entity</text>
+            <!-- Gmail SMTP -->
+            <rect x="265" y="250" width="170" height="40" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+            <text x="350" y="272" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">📧 Gmail SMTP Server</text>
+            <!-- Central process -->
+            <circle cx="350" cy="140" r="88" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2.5"/>
+            <text x="350" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F">PowerFit Gym</text>
+            <text x="350" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F">Management</text>
+            <text x="350" y="160" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F">System</text>
+            <!-- Member → System (registration, login) -->
+            <path d="M135,132 C196,120 220,125 262,132" fill="none" stroke="#1565C0" stroke-width="1.8" marker-end="url(#d1)"/>
+            <text x="192" y="116" font-size="10" fill="#1565C0" text-anchor="middle" font-weight="600">Registration Data</text>
+            <text x="192" y="128" font-size="9" fill="#888" text-anchor="middle">name, email, plan, password</text>
+            <!-- System → Member (dashboard) -->
+            <path d="M262,152 C220,160 196,158 135,153" fill="none" stroke="#D32F2F" stroke-width="1.8" marker-end="url(#d2)"/>
+            <text x="192" y="174" font-size="10" fill="#D32F2F" text-anchor="middle" font-weight="600">Dashboard Data</text>
+            <text x="192" y="186" font-size="9" fill="#888" text-anchor="middle">BMI, attendance, plan info</text>
+            <!-- Admin → System -->
+            <path d="M565,130 C525,120 480,128 438,132" fill="none" stroke="#6A1B9A" stroke-width="1.8" marker-end="url(#d3)"/>
+            <text x="506" y="115" font-size="10" fill="#6A1B9A" text-anchor="middle" font-weight="600">Admin Commands</text>
+            <text x="506" y="127" font-size="9" fill="#888" text-anchor="middle">delete, add plan...</text>
+            <!-- System → Admin -->
+            <path d="M438,152 C480,160 525,158 565,150" fill="none" stroke="#D32F2F" stroke-width="1.8" marker-end="url(#d2)"/>
+            <text x="506" y="175" font-size="10" fill="#D32F2F" text-anchor="middle" font-weight="600">Analytics Reports</text>
+            <text x="506" y="187" font-size="9" fill="#888" text-anchor="middle">member list, statistics</text>
+            <!-- System → SMTP -->
+            <path d="M360,228 L355,250" fill="none" stroke="#E65100" stroke-width="1.8" marker-end="url(#d4)"/>
+            <text x="380" y="243" font-size="10" fill="#E65100" font-weight="600">Password Email</text>
+        </svg>
+    </div>
+</div>
+
+<!-- ── SLIDE 9: DFD LEVEL 1 ── -->
+<div class="slide" id="s9">
+    <div class="slide-badge">Data Flow Diagram</div>
+    <h2 class="sh2">DFD Level 1 – <span>Main Processes</span></h2>
+    <div class="underline"></div>
+    <div style="width:100%; max-width:900px; overflow-x:auto;">
+    <table class="ptable" style="max-width:900px;">
+        <thead><tr><th>Process</th><th>Name</th><th>Input</th><th>Output</th><th>Data Stores</th></tr></thead>
+        <tbody>
+            <tr><td style="color:var(--primary); font-weight:700;">1.0</td><td>Registration</td><td>Member details, plan selection</td><td>Member record stored</td><td>D1 (write), D2 (read)</td></tr>
+            <tr><td style="color:var(--primary); font-weight:700;">2.0</td><td>Authentication</td><td>Email + password</td><td>Session token or error</td><td>D1 (read), D4 (read)</td></tr>
+            <tr><td style="color:var(--primary); font-weight:700;">3.0</td><td>Member Self-Service</td><td>Attendance/BMI/Profile requests</td><td>Dashboard data, updated records</td><td>D1 (R/W), D3 (R/W)</td></tr>
+            <tr><td style="color:var(--primary); font-weight:700;">4.0</td><td>Admin Management</td><td>Admin commands</td><td>Analytics reports, updated DB</td><td>D1 (delete/read), D2 (write)</td></tr>
+            <tr><td style="color:var(--primary); font-weight:700;">5.0</td><td>Password Reset</td><td>Member email address</td><td>Password updated + email sent</td><td>D1 (read/write)</td></tr>
+        </tbody>
+    </table>
+    </div>
+    <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <span style="font-size:13px; background:#E3F2FD; color:#1565C0; padding:6px 14px; border-radius:6px; font-weight:600; border:1px solid #90CAF9;">D1 = members</span>
+        <span style="font-size:13px; background:#FFEBEE; color:#D32F2F; padding:6px 14px; border-radius:6px; font-weight:600; border:1px solid #EF9A9A;">D2 = membership_plan</span>
+        <span style="font-size:13px; background:#E8F5E9; color:#2E7D32; padding:6px 14px; border-radius:6px; font-weight:600; border:1px solid #A5D6A7;">D3 = attendance</span>
+        <span style="font-size:13px; background:#F3E5F5; color:#6A1B9A; padding:6px 14px; border-radius:6px; font-weight:600; border:1px solid #CE93D8;">D4 = admin</span>
+    </div>
+</div>
+
+<!-- ── SLIDE 10: DFD LEVEL 2 ── -->
+<div class="slide" id="s10">
+    <div class="slide-badge">Data Flow Diagram</div>
+    <h2 class="sh2">DFD Level 2 – <span>Process 3.0 Exploded</span></h2>
+    <div class="underline"></div>
+    <div class="g3" style="max-width:860px;">
+        <div class="pcard" style="border-top:4px solid #1565C0;">
+            <h3 style="color:#1565C0;">3.1 View Profile</h3>
+            <p><strong>Input:</strong> member_id (session)<br><strong>Data Store:</strong> D1 (read)<br><strong>Output:</strong> Personal and membership details displayed</p>
+        </div>
+        <div class="pcard" style="border-top:4px solid #F9A825;">
+            <h3 style="color:#F57F17;">3.2 Edit Profile</h3>
+            <p><strong>Input:</strong> Updated mobile, address, height, weight<br><strong>Data Store:</strong> D1 (write)<br><strong>Output:</strong> DB updated, success message</p>
+        </div>
+        <div class="pcard" style="border-top:4px solid #2E7D32;">
+            <h3 style="color:#2E7D32;">3.3 Mark Attendance</h3>
+            <p><strong>Input:</strong> member_id + current date/time<br><strong>Data Store:</strong> D3 (write)<br><strong>Output:</strong> Attendance record inserted, history updated</p>
+        </div>
+        <div class="pcard" style="border-top:4px solid #D32F2F;">
+            <h3 style="color:#D32F2F;">3.4 BMI Calculator</h3>
+            <p><strong>Input:</strong> Height (cm), weight (kg)<br><strong>Data Store:</strong> D1 (write — optional)<br><strong>Output:</strong> BMI value, category, recommendations</p>
+        </div>
+        <div class="pcard" style="border-top:4px solid #6A1B9A;">
+            <h3 style="color:#6A1B9A;">3.5 Workout Plans</h3>
+            <p><strong>Input:</strong> BMI category from D1<br><strong>Data Store:</strong> D1 (read)<br><strong>Output:</strong> Personalised workout routines</p>
+        </div>
+        <div class="pcard" style="border-top:4px solid #E65100;">
+            <h3 style="color:#E65100;">3.6 Attendance History</h3>
+            <p><strong>Input:</strong> member_id<br><strong>Data Store:</strong> D3 (read)<br><strong>Output:</strong> Date-wise log, monthly % consistency</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 11: MODULES ── -->
+<div class="slide" id="s11">
+    <div class="slide-badge">Application Modules</div>
+    <h2 class="sh2">System <span>Modules</span></h2>
+    <div class="underline"></div>
+    <div class="g2">
+        <div>
+            <h3 style="color:var(--blue); margin-bottom:14px; font-size:15px; font-weight:700;">👤 Member Portal (Session-Protected)</h3>
+            <ul class="blist">
+                <li>🏠 Home, About, Registration</li>
+                <li>🔑 Login / Forgot Password</li>
+                <li>📊 Personal Dashboard (BMI, Plan, Status)</li>
+                <li>✏️ View &amp; Edit Profile</li>
+                <li>📅 Daily Attendance Check-In</li>
+                <li>⚖️ Live BMI Calculator &amp; Save</li>
+                <li>💪 Personalized Workout Plans</li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color:var(--primary); margin-bottom:14px; font-size:15px; font-weight:700;">🛡️ Admin Panel (Session-Protected)</h3>
+            <ul class="blist red">
+                <li>📈 Analytics (Total / Active / Expired)</li>
+                <li>🔍 Searchable Member Table</li>
+                <li>🗑️ Delete Member Records</li>
+                <li>📋 View All Membership Plans</li>
+                <li>➕ Create New Plans</li>
+                <li>🌐 Visit Public Website</li>
+                <li>🚪 Secure Admin Logout</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 12: SECURITY ── -->
+<div class="slide" id="s12">
+    <div class="slide-badge">Security Architecture</div>
+    <h2 class="sh2">Security <span>Features</span></h2>
+    <div class="underline"></div>
+    <div class="g3" style="max-width:860px;">
+        <div class="pcard" style="border-top:4px solid var(--primary);"><div class="icon">🔐</div><h3>AES-128 Encryption</h3><p>All passwords encrypted using AES/ECB/PKCS5 before storing in MySQL. Never stored in plain text.</p></div>
+        <div class="pcard"><div class="icon">🧩</div><h3>SQL Injection Prevention</h3><p>Every DB query uses PreparedStatement with parameter binding — no raw SQL concatenation.</p></div>
+        <div class="pcard" style="border-top:4px solid var(--blue);"><div class="icon">🔑</div><h3>Session Authentication</h3><p>Server-side sessions store member_id/admin_user. Every protected page validates session first.</p></div>
+        <div class="pcard"><div class="icon">🚫</div><h3>Unauthorized Access Block</h3><p>Direct URL access to protected pages redirects automatically to the appropriate login page.</p></div>
+        <div class="pcard" style="border-top:4px solid var(--green);"><div class="icon">✅</div><h3>Dual-Side Validation</h3><p>Forms validated on both client (JavaScript) and server (Java) for complete protection.</p></div>
+        <div class="pcard"><div class="icon">📧</div><h3>Gmail App Password</h3><p>SMTP uses a revocable Google App Password — separate from the main account.</p></div>
+    </div>
+</div>
+
+<!-- ── SLIDE 13: KEY FLOWS ── -->
+<div class="slide" id="s13">
+    <div class="slide-badge">System Flow</div>
+    <h2 class="sh2">Key Process <span>Flows</span></h2>
+    <div class="underline"></div>
+    <div style="width:100%; max-width:840px;">
+        <h3 style="font-size:14px; color:var(--blue); margin-bottom:12px; font-weight:700;">🔐 Member Login Flow</h3>
+        <div class="flow-row" style="margin-bottom:20px;">
+            <div class="fbox" style="border-color:#1565C0;">Enter Email<br>+ Password</div>
+            <div class="farrow">→</div>
+            <div class="fbox">AES<br>Encrypt</div>
+            <div class="farrow">→</div>
+            <div class="fbox">SELECT<br>from DB</div>
+            <div class="farrow">→</div>
+            <div class="fbox" style="border-color:var(--green); background:#E8F5E9;">✅ Match<br>Set Session</div>
+            <div class="farrow">→</div>
+            <div class="fbox" style="border-color:var(--green); background:#E8F5E9;">Member<br>Dashboard</div>
+        </div>
+
+        <h3 style="font-size:14px; color:var(--orange); margin-bottom:12px; font-weight:700;">📧 Forgot Password Flow</h3>
+        <div class="flow-row" style="margin-bottom:20px;">
+            <div class="fbox" style="border-color:var(--orange);">Enter<br>Email</div>
+            <div class="farrow" style="color:var(--orange);">→</div>
+            <div class="fbox">Check<br>DB</div>
+            <div class="farrow" style="color:var(--orange);">→</div>
+            <div class="fbox">Generate<br>Password</div>
+            <div class="farrow" style="color:var(--orange);">→</div>
+            <div class="fbox">AES Encrypt<br>+ UPDATE</div>
+            <div class="farrow" style="color:var(--orange);">→</div>
+            <div class="fbox" style="border-color:var(--orange); background:#FFF3E0;">📧 Send<br>via SMTP</div>
+        </div>
+
+        <h3 style="font-size:14px; color:var(--green); margin-bottom:12px; font-weight:700;">📅 Attendance Check-In Flow</h3>
+        <div class="flow-row">
+            <div class="fbox" style="border-color:var(--green);">Click<br>"Mark"</div>
+            <div class="farrow" style="color:var(--green);">→</div>
+            <div class="fbox">Get Date<br>&amp; Time</div>
+            <div class="farrow" style="color:var(--green);">→</div>
+            <div class="fbox">INSERT<br>attendance</div>
+            <div class="farrow" style="color:var(--green);">→</div>
+            <div class="fbox" style="border-color:var(--green); background:#E8F5E9;">✅ Success<br>Log updated</div>
+            <span style="font-size:18px; color:#ccc; padding:0 8px;"> / </span>
+            <div class="fbox" style="border-color:var(--primary); background:#FFEBEE;">⚠️ Already<br>Marked</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 14: STATS ── -->
+<div class="slide" id="s14">
+    <div class="slide-badge">Project Statistics</div>
+    <h2 class="sh2">By The <span>Numbers</span></h2>
+    <div class="underline"></div>
+    <div class="stats-row" style="margin-bottom:28px;">
+        <div class="spill"><div class="num">18+</div><div class="lbl">JSP Pages</div></div>
+        <div class="spill"><div class="num">4</div><div class="lbl">DB Tables</div></div>
+        <div class="spill"><div class="num">2</div><div class="lbl">Java Classes</div></div>
+        <div class="spill"><div class="num">3</div><div class="lbl">Membership Plans</div></div>
+        <div class="spill"><div class="num">12</div><div class="lbl">Test Cases</div></div>
+        <div class="spill" style="border-color:var(--green);"><div class="num" style="color:var(--green);">100%</div><div class="lbl">Tests Passed</div></div>
+    </div>
+    <div class="g3" style="max-width:760px;">
+        <div class="pcard" style="text-align:center; border-top:4px solid var(--gold);">
+            <div class="icon">🥉</div>
+            <h3>Basic Plan</h3>
+            <p style="font-size:22px; color:var(--gold); font-weight:800; margin:6px 0;">₹999</p>
+            <p style="color:var(--text-muted);">1 Month</p>
+        </div>
+        <div class="pcard" style="text-align:center; border-top:4px solid var(--primary);">
+            <div class="icon">🥈</div>
+            <h3>Standard Plan</h3>
+            <p style="font-size:22px; color:var(--primary); font-weight:800; margin:6px 0;">₹1,499</p>
+            <p style="color:var(--text-muted);">3 Months</p>
+        </div>
+        <div class="pcard" style="text-align:center; border-top:4px solid var(--green);">
+            <div class="icon">🥇</div>
+            <h3>Premium Plan</h3>
+            <p style="font-size:22px; color:var(--green); font-weight:800; margin:6px 0;">₹2,499</p>
+            <p style="color:var(--text-muted);">12 Months</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── SLIDE 15: TESTING ── -->
+<div class="slide" id="s15">
+    <div class="slide-badge">Quality Assurance</div>
+    <h2 class="sh2">Test <span>Results</span></h2>
+    <div class="underline"></div>
+    <table class="ptable" style="max-width:820px;">
+        <thead><tr><th>#</th><th>Test Case</th><th>Expected</th><th>Result</th></tr></thead>
+        <tbody>
+            <tr><td>TC-01</td><td>Member Registration (Valid)</td><td>Redirect to login</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-02</td><td>Duplicate Email Registration</td><td>Error shown</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-03</td><td>Login with correct credentials</td><td>Dashboard loaded</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-04</td><td>Login with wrong password</td><td>Error message</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-05</td><td>First attendance check-in</td><td>Record inserted</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-06</td><td>Duplicate attendance same day</td><td>Warning shown</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-07</td><td>BMI — 170cm, 65kg</td><td>22.5 – Normal</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-08</td><td>Forgot password (valid email)</td><td>Email sent</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-09</td><td>Admin delete member</td><td>Record removed</td><td><span class="badge badge-green">PASS</span></td></tr>
+            <tr><td>TC-10</td><td>Direct URL access (no session)</td><td>Redirect to login</td><td><span class="badge badge-green">PASS</span></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── SLIDE 16: THANK YOU ── -->
+<div class="slide" id="s16" style="background:linear-gradient(135deg,#FFEBEE 0%,#fff 50%,#E3F2FD 100%);">
+    <div class="slide-badge">End of Presentation</div>
+    <h1 class="sh1">Thank <span>You!</span></h1>
+    <p class="slide-sub" style="margin-bottom:36px;">PowerFit Gym Management System — Built entirely with JSP · MySQL · Apache Tomcat 11</p>
+    <div class="g3" style="max-width:700px;">
+        <div class="pcard" style="text-align:center;">
+            <div class="icon">💻</div>
+            <h3>Source Code</h3>
+            <p>NetBeansProjects<br>/GymManagementSystem</p>
+        </div>
+        <div class="pcard" style="text-align:center; border-color:var(--primary);">
+            <div class="icon">🌐</div>
+            <h3>Live URL</h3>
+            <p>localhost:8080<br>/GymManagementSystem</p>
+        </div>
+        <div class="pcard" style="text-align:center; border-color:var(--blue);">
+            <div class="icon">❓</div>
+            <h3>Questions?</h3>
+            <p>Open for discussion<br>and queries!</p>
+        </div>
+    </div>
+</div>
+
+</div><!-- end slideshow -->
+
+<div class="kbd-hint">Use ← → arrow keys or buttons to navigate</div>
+<div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>◀ Prev</button>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const progress = document.getElementById('progressBar');
+    const slideNum = document.getElementById('slideNum');
+    const dots = document.getElementById('dotsContainer');
+
+    for (let i = 0; i < total; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goTo(i);
+        dots.appendChild(d);
+    }
+
+    function updateUI() {
+        slides.forEach((s, i) => { s.style.display = i === current ? 'flex' : 'none'; s.style.opacity = i === current ? '1' : '0'; });
+        document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+        progress.style.width = ((current + 1) / total * 100) + '%';
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+    }
+
+    function changeSlide(dir) { goTo(current + dir); }
+    function goTo(idx) { if (idx < 0 || idx >= total) return; current = idx; updateUI(); }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+    });
+    let sx = 0;
+    document.addEventListener('touchstart', e => sx = e.touches[0].clientX);
+    document.addEventListener('touchend', e => { const d = sx - e.changedTouches[0].clientX; if (Math.abs(d) > 50) changeSlide(d > 0 ? 1 : -1); });
+
+    updateUI();
+</script>
+</body>
+</html>
